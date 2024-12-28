@@ -1,5 +1,6 @@
 """Math utilities used for the physical simulation"""
 
+from __future__ import annotations
 from typing import Tuple
 import pygame
 
@@ -97,3 +98,37 @@ class CoordSys:
                 (0, 0, 0),
                 (0, height - y_offset, width, y_offset),
             )
+
+
+class Vector:
+    """A two-dimensional dynamic vector"""
+
+    def __init__(self, x: float, y: float) -> None:
+        self.x: float = x
+        self.y: float = y
+
+    def __repr__(self) -> str:
+        return f"<Vector ({self.x}, {self.y})"
+
+    def __add__(self, vec2: Vector) -> Vector:
+        return Vector(self.x + vec2.x, self.y + vec2.y)
+
+    def __sub__(self, vec2: Vector) -> Vector:
+        return Vector(self.x - vec2.x, self.y - vec2.y)
+
+    def __mul__(self, val: float) -> Vector:
+        return Vector(self.x * val, self.y * val)
+
+    def __div__(self, val: float) -> Vector:
+        return Vector(self.x / val, self.y / val)
+
+    @property
+    def magnitude(self) -> float:
+        """Calculate the magnitude of the vector
+
+        Returns
+        -------
+        float
+            The magnitude of the vector
+        """
+        return (self.x**2 + self.y**2) ** 0.5
