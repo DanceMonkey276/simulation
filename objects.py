@@ -16,7 +16,7 @@ class SimulationObject:
     ) -> None:
         self.position: List[Vector] = [Vector(x_0, y_0)]
         self.velocity: List[Vector] = [Vector(0, 0)]
-        self.acceleration: List[Vector] = [Vector(0, 0)]
+        self.acceleration: Vector = Vector(0, 0)
 
         self.index = SimulationObject.global_index
         SimulationObject.global_index += 1
@@ -54,17 +54,35 @@ class SimulationObject:
     def v_0(self, new_val: Vector) -> None:
         self.velocity[0] = new_val
 
-    @property
-    def a_0(self) -> Vector:
-        """Getter-function for the starting acceleration of the object
+    def step(self, dt: float) -> None:
+        """Calculate where the object will be in the next step
 
-        Returns
-        -------
-        Vector
-            The starting acceleration of the object
+        Parameters
+        ----------
+        dt : float
+            The time difference to the next step
         """
-        return self.acceleration[0]
+        self.velocity.append(self.acceleration * dt + self.velocity[-1])
+        self.position.append(self.velocity[-1] * dt + self.position[-1])
 
-    @a_0.setter
-    def a_0(self, new_val: Vector) -> None:
-        self.acceleration[0] = new_val
+        self.acceleration = Vector(0, 0)
+
+
+def calculate_objects(
+    objects: List[SimulationObject], end_time: float, dt: float
+) -> None:
+    """Calculate the position values of all objects at every time in the simulation
+
+    Parameters
+    ----------
+    objects : List[SimulationObject]
+        A list containing all objects for which the values should be calculated
+    dt : float
+        The time difference between every step
+    """
+    time: float = 0
+    while time <= end_time:
+        for obj in objects:
+            obj.step(dt)
+
+        time += dt
