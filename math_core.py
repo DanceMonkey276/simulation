@@ -1,7 +1,8 @@
 """Math utilities used for the physical simulation"""
 
 from __future__ import annotations
-from typing import Tuple
+from typing import Tuple, Any, Iterator
+from collections.abc import Sequence
 import pygame
 
 
@@ -100,7 +101,7 @@ class CoordSys:
             )
 
 
-class Vector:
+class Vector(Sequence):
     """A two-dimensional dynamic vector"""
 
     def __init__(self, x: float, y: float) -> None:
@@ -108,19 +109,60 @@ class Vector:
         self.y: float = y
 
     def __repr__(self) -> str:
-        return f"<Vector ({self.x}, {self.y})"
+        return f"<Vector ({self.x}, {self.y})>"
 
-    def __add__(self, vec2: Vector) -> Vector:
-        return Vector(self.x + vec2.x, self.y + vec2.y)
+    def __len__(self) -> int:
+        return 2
 
-    def __sub__(self, vec2: Vector) -> Vector:
-        return Vector(self.x - vec2.x, self.y - vec2.y)
+    # Since this vector is two-dimensional, there is no need for it to be sliceable. I added
+    # the `# type: ignore` to supress an error message created by the Mypy type checker
+    def __getitem__(self, index: int) -> float:  # type: ignore
+        if index == 0:
+            return self.x
+        if index == 1:
+            return self.y
+        raise IndexError("Vector index out of range")
 
-    def __mul__(self, val: float) -> Vector:
-        return Vector(self.x * val, self.y * val)
+    def __add__(self, other: Any) -> Vector:
+        if isinstance(other, Vector):
+            return Vector(self.x + other.x, self.y + other.y)
+        raise ValueError(f"Can only add two vectors, not vector and {type(other)}")
 
-    def __div__(self, val: float) -> Vector:
-        return Vector(self.x / val, self.y / val)
+    def __sub__(self, other: Any) -> Vector:
+        if isinstance(other, Vector):
+            return Vector(self.x - other.x, self.y - other.y)
+        raise ValueError(f"Can only subtract two vectors, not vector and {type(other)}")
+
+    def __mul__(self, other: Any) -> Vector:
+        if isinstance(other, (int, float)):
+            return Vector(self.x * other, self.y * other)
+        raise ValueError(
+            f"Can only multiply scalar (int, float) with vector, not {type(other)}"
+        )
+
+    def __rmul__(self, scalar: Any) -> Vector:
+        return self.__mul__(scalar)
+
+    def __div__(self, other: Any) -> Vector:
+        if isinstance(other, (int, float)):
+            return Vector(self.x / other, self.y / other)
+        raise ValueError(f"Can divide vector only by scalar, not {type(other)}")
+
+    def __truediv__(self, other: Any) -> Vector:
+        if isinstance(other, (int, float)):
+            return Vector(self.x // other, self.y // other)
+        raise ValueError(f"Can divide vector only by scalar, not {type(other)}")
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Vector):
+            return self.x == other.x and self.y == other.y
+        raise ValueError(f"Can only compare two vectors, not vector and {type(other)}")
+
+    def __ne__(self, other: Any) -> bool:
+        return not self.__eq__(other)
+
+    def __iter__(self) -> Iterator[float]:
+        return iter((self.x, self.y))
 
     @property
     def magnitude(self) -> float:
