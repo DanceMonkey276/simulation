@@ -1,7 +1,8 @@
 """Objects that are used in the physical simulation"""
 
 from typing import List
-from math_core import Vector
+import pygame
+from math_core import Vector, CoordSys
 
 
 class SimulationObject:
@@ -66,6 +67,30 @@ class SimulationObject:
         self.position.append(self.velocity[-1] * dt + self.position[-1])
 
         self.acceleration = Vector(0, 0)
+
+    def draw(self, step: int, coord_sys: CoordSys) -> None:
+        """Draw the object onto the screen
+
+        Parameters
+        ----------
+        step : int
+            The current step of the simulation
+        coord_sys : CoordSys
+            The coordinate System used for the simulation screen
+        """
+        pygame.draw.circle(
+            coord_sys.display,
+            (255, 255, 255),
+            coord_sys.coord(*self.position[step]),
+            10,
+        )
+        pygame.draw.circle(
+            coord_sys.display,
+            (0, 0, 0),
+            coord_sys.coord(*self.position[step]),
+            10,
+            2,
+        )
 
 
 def calculate_objects(

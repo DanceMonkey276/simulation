@@ -1,20 +1,32 @@
 """The main script for a physical simulation"""
 
 import sys
+from typing import List
 import pygame
-import math_core
+from math_core import CoordSys, Vector
+from objects import SimulationObject, calculate_objects
 
 # Define tweakable values
 FPS: float = 30.0
 DEBUG: bool = True
 END_TIME: float = 100.0
 
+# Create the objects in the simulation
+o1: SimulationObject = SimulationObject(500, 500)
+o2: SimulationObject = SimulationObject(1000, 500)
+o2.v_0 = Vector(20, 0)
+
+simulation_objects: List[SimulationObject] = [o1, o2]
+
+# Calculate the position values of the objects
+calculate_objects(simulation_objects, END_TIME, 1 / FPS)
+
 # Initialize the display
 pygame.display.init()
 pygame.display.set_mode((1500, 1000), flags=pygame.RESIZABLE)
 display: pygame.Surface = pygame.display.get_surface()
 clock: pygame.time.Clock = pygame.time.Clock()
-coord_sys = math_core.CoordSys(display)
+coord_sys: CoordSys = CoordSys(display)
 
 # Define starting values for the main loop
 step: int = 0
@@ -31,17 +43,9 @@ while RUNNING:
     # Fill the display
     display.fill((121, 121, 121))
 
-    # Draw a rectangle to demonstrate the coordinate system
-    pygame.draw.polygon(
-        display,
-        (255, 0, 0),
-        [
-            coord_sys.coord(450, 450),
-            coord_sys.coord(1050, 450),
-            coord_sys.coord(1050, 550),
-            coord_sys.coord(450, 550),
-        ],
-    )
+    # Draw all objects to the screen
+    for obj in simulation_objects:
+        obj.draw(step, coord_sys)
 
     # Update the screen
     coord_sys.draw_borders()
