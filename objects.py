@@ -2,7 +2,7 @@
 
 from typing import List
 import pygame
-from math_core import Vector, CoordSys
+from math_core import Vector, CoordSys, dot_product
 
 
 class SimulationObject:
@@ -11,13 +11,14 @@ class SimulationObject:
     global_index: int = 0
 
     def __init__(
-        self,
-        x_0: float,
-        y_0: float,
+        self, x_0: float, y_0: float, radius: float = 10.0, mass: float = 1.0
     ) -> None:
         self.position: List[Vector] = [Vector(x_0, y_0)]
         self.velocity: List[Vector] = [Vector(0, 0)]
         self.acceleration: Vector = Vector(0, 0)
+
+        self.radius: float = radius
+        self.mass: float = mass
 
         self.index = SimulationObject.global_index
         SimulationObject.global_index += 1
@@ -55,16 +56,23 @@ class SimulationObject:
     def v_0(self, new_val: Vector) -> None:
         self.velocity[0] = new_val
 
-    def step(self, dt: float) -> None:
+    def next(self) -> None:
+        """Copy the last velocity and position values for further calculation"""
+        self.velocity.append(self.velocity[-1])
+        self.position.append(self.position[-1])
+
+    def step(self, step: int, dt: float) -> None:
         """Calculate where the object will be in the next step
 
         Parameters
         ----------
+        step : int
+            The step at which the values should be calculated
         dt : float
             The time difference to the next step
         """
-        self.velocity.append(self.acceleration * dt + self.velocity[-1])
-        self.position.append(self.velocity[-1] * dt + self.position[-1])
+        self.velocity[step] += self.acceleration * dt
+        self.position[step] += self.velocity[step] * dt
 
         self.acceleration = Vector(0, 0)
 
@@ -93,6 +101,49 @@ class SimulationObject:
         )
 
 
+class Interactions:
+    """Organize interactions between objects"""
+
+    def __init__(self, objects: List[SimulationObject]) -> None:
+        self.objects = objects
+
+    def __repr__(self) -> str:
+        return "<Interactions>"
+
+    def calculate(self, step: int) -> None:
+        """Calculate the interactions between the objects
+
+        Parameters
+        ----------
+        step : int
+            The current step of the simulation
+        """
+        for i, obj1 in enumerate(self.objects):
+            for obj2 in self.objects[i + 1 :]:
+                if (
+                    obj2.position[step] - obj1.position[step]
+                ).magnitude > obj1.radius + obj2.radius:
+                    continue
+
+                norm_vector: Vector = (obj2.position[step] - obj1.position[step]) / (
+                    obj2.position[step] - obj1.position[step]
+                ).magnitude
+
+                relative_velocity: float = dot_product(
+                    norm_vector, obj1.velocity[step] - obj2.velocity[step]
+                )
+
+                if relative_velocity <= 0:
+                    continue
+
+                impulse: Vector = (
+                    2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
+                ) * norm_vector
+
+                obj1.velocity[step] -= impulse / obj1.mass
+                obj2.velocity[step] += impulse / obj2.mass
+
+
 def calculate_objects(
     objects: List[SimulationObject], end_time: float, dt: float
 ) -> None:
@@ -106,8 +157,19 @@ def calculate_objects(
         The time difference between every step
     """
     time: float = 0
+    step: int = 0
+
+    interactions: Interactions = Interactions(objects)
+
     while time <= end_time:
+
+        interactions.calculate(step)
+
         for obj in objects:
-            obj.step(dt)
+            obj.step(step, dt)
+
+        for obj in objects:
+            obj.next()
 
         time += dt
+        step += 1

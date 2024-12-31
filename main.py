@@ -12,11 +12,16 @@ DEBUG: bool = True
 END_TIME: float = 100.0
 
 # Create the objects in the simulation
-o1: SimulationObject = SimulationObject(500, 500)
-o2: SimulationObject = SimulationObject(1000, 500)
-o2.v_0 = Vector(20, 0)
+moving_ball: SimulationObject = SimulationObject(500, 500)
+moving_ball.v_0 = Vector(20, 0)
 
-simulation_objects: List[SimulationObject] = [o1, o2]
+simulation_objects: List[SimulationObject] = [
+    moving_ball,
+    SimulationObject(550, 500),
+    SimulationObject(600, 500),
+    SimulationObject(650, 500),
+    SimulationObject(700, 500),
+]
 
 # Calculate the position values of the objects
 calculate_objects(simulation_objects, END_TIME, 1 / FPS)
