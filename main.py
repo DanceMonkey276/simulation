@@ -3,7 +3,7 @@
 import sys
 from typing import List
 import pygame
-from math_core import CoordSys, Vector
+from math_core import CoordSys
 from objects import SimulationObject, Molecule, calculate_objects
 
 # Define tweakable values
@@ -13,7 +13,7 @@ END_TIME: float = 100.0
 
 # Create the objects in the simulation
 
-simulation_objects: List[SimulationObject] = [Molecule(500, 500, charge=1)]
+simulation_objects: List[SimulationObject] = [Molecule(5000, 5000, charge=1)]
 
 # Calculate the position values of the objects
 calculate_objects(simulation_objects, END_TIME, 1 / FPS)

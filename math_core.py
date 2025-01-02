@@ -11,8 +11,8 @@ class CoordSys:
 
     def __init__(self, display: pygame.Surface) -> None:
         self.display = display
-        self.x_tot: int = 1500
-        self.y_tot: int = 1000
+        self.x_tot: int = 15000
+        self.y_tot: int = 10000
 
     def __repr__(self) -> str:
         return f"<Coordinate System ([0, {self.x_tot}], [0, {self.y_tot}])>"
