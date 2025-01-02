@@ -90,13 +90,13 @@ class SimulationObject:
             coord_sys.display,
             (255, 255, 255),
             coord_sys.coord(*self.position[step]),
-            10,
+            coord_sys.distance(10),
         )
         pygame.draw.circle(
             coord_sys.display,
             (0, 0, 0),
             coord_sys.coord(*self.position[step]),
-            10,
+            coord_sys.distance(10),
             2,
         )
 
