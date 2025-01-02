@@ -103,6 +103,25 @@ class SimulationObject:
         )
 
 
+class Molecule(SimulationObject):
+    """A base class for molecules in the simulation"""
+
+    def __init__(
+        self,
+        x_0: float,
+        y_0: float,
+        radius: float = 10,
+        mass: float = 1,
+        charge: int = 0,
+    ) -> None:
+        super().__init__(x_0, y_0, radius, mass)
+
+        self.charge = charge
+
+    def __repr__(self) -> str:
+        return f"<Molecule #{self.index}>"
+
+
 class Interactions:
     """Organize interactions between objects"""
 

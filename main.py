@@ -4,7 +4,7 @@ import sys
 from typing import List
 import pygame
 from math_core import CoordSys, Vector
-from objects import SimulationObject, calculate_objects
+from objects import SimulationObject, Molecule, calculate_objects
 
 # Define tweakable values
 FPS: float = 30.0
@@ -12,16 +12,8 @@ DEBUG: bool = True
 END_TIME: float = 100.0
 
 # Create the objects in the simulation
-moving_ball: SimulationObject = SimulationObject(500, 500)
-moving_ball.v_0 = Vector(20, 0)
 
-simulation_objects: List[SimulationObject] = [
-    moving_ball,
-    SimulationObject(550, 500),
-    SimulationObject(600, 500),
-    SimulationObject(650, 500),
-    SimulationObject(700, 500),
-]
+simulation_objects: List[SimulationObject] = [Molecule(500, 500, charge=1)]
 
 # Calculate the position values of the objects
 calculate_objects(simulation_objects, END_TIME, 1 / FPS)
