@@ -13,13 +13,16 @@ class SimulationObject:
     def __init__(
         self, x_0: float, y_0: float, radius: float = 10.0, mass: float = 1.0
     ) -> None:
+        # Motion values
         self.position: List[Vector] = [Vector(x_0, y_0)]
         self.velocity: List[Vector] = [Vector(0, 0)]
         self.acceleration: Vector = Vector(0, 0)
 
+        # Object properties
         self.radius: float = radius
         self.mass: float = mass
 
+        # Object index
         self.index = SimulationObject.global_index
         SimulationObject.global_index += 1
 
@@ -58,6 +61,7 @@ class SimulationObject:
 
     def next(self) -> None:
         """Copy the last velocity and position values for further calculation"""
+        self.acceleration = Vector(0, 0)
         self.velocity.append(self.velocity[-1])
         self.position.append(self.position[-1])
 
@@ -73,8 +77,6 @@ class SimulationObject:
         """
         self.velocity[step] += self.acceleration * dt
         self.position[step] += self.velocity[step] * dt
-
-        self.acceleration = Vector(0, 0)
 
     def draw(self, step: int, coord_sys: CoordSys) -> None:
         """Draw the object onto the screen
@@ -120,6 +122,7 @@ class Interactions:
         """
         for i, obj1 in enumerate(self.objects):
             for obj2 in self.objects[i + 1 :]:
+                # Check if the objects are colliding
                 if (
                     obj2.position[step] - obj1.position[step]
                 ).magnitude > obj1.radius + obj2.radius:
@@ -133,6 +136,7 @@ class Interactions:
                     norm_vector, obj1.velocity[step] - obj2.velocity[step]
                 )
 
+                # Check if the objects are moving towards each other
                 if relative_velocity <= 0:
                     continue
 
@@ -140,6 +144,7 @@ class Interactions:
                     2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
                 ) * norm_vector
 
+                # Apply the impulse to the objects
                 obj1.velocity[step] -= impulse / obj1.mass
                 obj2.velocity[step] += impulse / obj2.mass
 
@@ -153,13 +158,16 @@ def calculate_objects(
     ----------
     objects : List[SimulationObject]
         A list containing all objects for which the values should be calculated
+    end_time : float
+        The
     dt : float
         The time difference between every step
     """
-    time: float = 0
-    step: int = 0
 
     interactions: Interactions = Interactions(objects)
+
+    time: float = 0
+    step: int = 0
 
     while time <= end_time:
 
