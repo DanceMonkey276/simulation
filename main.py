@@ -12,7 +12,6 @@ DEBUG: bool = True
 END_TIME: float = 100.0
 
 # Create the objects in the simulation
-
 simulation_objects: List[SimulationObject] = [
     Molecule(7000, 5000, charge=1),
     Molecule(8000, 5000, charge=-1),

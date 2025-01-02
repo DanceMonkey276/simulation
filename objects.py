@@ -3,7 +3,7 @@
 from typing import List
 import pygame
 from scipy.constants import pi, epsilon_0
-from math_core import Vector, CoordSys, dot_product
+from math_core import Vector, CoordSys
 
 
 class SimulationObject:
@@ -135,27 +135,19 @@ class Interactions:
     def _elastic_collision(
         self, obj1: SimulationObject, obj2: SimulationObject, step: int
     ) -> None:
+        distance: Vector = obj2.position[step] - obj1.position[step]
+
         # Check if the objects are colliding
-        if (
-            obj2.position[step] - obj1.position[step]
-        ).magnitude > obj1.radius + obj2.radius:
+        if distance.magnitude > obj1.radius + obj2.radius:
             return
 
-        norm_vector: Vector = (obj2.position[step] - obj1.position[step]) / (
-            obj2.position[step] - obj1.position[step]
-        ).magnitude
-
-        relative_velocity: float = dot_product(
-            norm_vector, obj1.velocity[step] - obj2.velocity[step]
-        )
+        relative_velocity: Vector = obj1.velocity[step] - obj2.velocity[step]
 
         # Check if the objects are moving towards each other
-        if relative_velocity <= 0:
+        if relative_velocity.magnitude <= 0:
             return
 
-        impulse: Vector = (
-            2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
-        ) * norm_vector
+        impulse: Vector = 2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
 
         # Apply the impulse to the objects
         obj1.velocity[step] -= impulse / obj1.mass

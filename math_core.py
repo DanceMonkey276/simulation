@@ -174,21 +174,3 @@ class Vector(Sequence[float]):
             The magnitude of the vector
         """
         return (self.x**2 + self.y**2) ** 0.5
-
-
-def dot_product(vec1: Vector, vec2: Vector) -> float:
-    """Calculate the dot-product of two vectors
-
-    Parameters
-    ----------
-    vec1 : Vector
-        The first vector
-    vec2 : Vector
-        The second vector
-
-    Returns
-    -------
-    float
-        The dot-product of the vectors
-    """
-    return vec1.x * vec2.x + vec1.y * vec2.y
