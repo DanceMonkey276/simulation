@@ -2,6 +2,7 @@
 
 from typing import List
 import pygame
+from scipy.constants import pi, epsilon_0
 from math_core import Vector, CoordSys, dot_product
 
 
@@ -11,7 +12,7 @@ class SimulationObject:
     global_index: int = 0
 
     def __init__(
-        self, x_0: float, y_0: float, radius: float = 10.0, mass: float = 1.0
+        self, x_0: float, y_0: float, radius: float = 100.0, mass: float = 1.0
     ) -> None:
         # Motion values
         self.position: List[Vector] = [Vector(x_0, y_0)]
@@ -92,13 +93,13 @@ class SimulationObject:
             coord_sys.display,
             (255, 255, 255),
             coord_sys.coord(*self.position[step]),
-            coord_sys.distance(10),
+            coord_sys.distance(self.radius),
         )
         pygame.draw.circle(
             coord_sys.display,
             (0, 0, 0),
             coord_sys.coord(*self.position[step]),
-            coord_sys.distance(10),
+            coord_sys.distance(self.radius),
             2,
         )
 
@@ -110,8 +111,8 @@ class Molecule(SimulationObject):
         self,
         x_0: float,
         y_0: float,
-        radius: float = 10,
-        mass: float = 1,
+        radius: float = 100.0,
+        mass: float = 1.0,
         charge: int = 0,
     ) -> None:
         super().__init__(x_0, y_0, radius, mass)
@@ -131,6 +132,58 @@ class Interactions:
     def __repr__(self) -> str:
         return "<Interactions>"
 
+    def _elastic_collision(
+        self, obj1: SimulationObject, obj2: SimulationObject, step: int
+    ) -> None:
+        # Check if the objects are colliding
+        if (
+            obj2.position[step] - obj1.position[step]
+        ).magnitude > obj1.radius + obj2.radius:
+            return
+
+        norm_vector: Vector = (obj2.position[step] - obj1.position[step]) / (
+            obj2.position[step] - obj1.position[step]
+        ).magnitude
+
+        relative_velocity: float = dot_product(
+            norm_vector, obj1.velocity[step] - obj2.velocity[step]
+        )
+
+        # Check if the objects are moving towards each other
+        if relative_velocity <= 0:
+            return
+
+        impulse: Vector = (
+            2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
+        ) * norm_vector
+
+        # Apply the impulse to the objects
+        obj1.velocity[step] -= impulse / obj1.mass
+        obj2.velocity[step] += impulse / obj2.mass
+
+    def _molecule_interaction(self, obj1: Molecule, obj2: Molecule, step: int) -> None:
+        # Convert the distance to metres
+        distance: Vector = (obj2.position[step] - obj1.position[step]) * 1e-12
+
+        # Avoid huge forces in case the molecules phase through each other
+        if distance.magnitude <= (obj1.radius + obj2.radius) * 1e-12:
+            return
+
+        # Convert charges to coulombs
+        coulomb_1: float = obj1.charge * 1.602176634e-19
+        coulomb_2: float = obj2.charge * 1.602176634e-19
+
+        # Calculate the force between the molecules using the formula for coulomb force
+        force: Vector = (
+            (coulomb_1 * coulomb_2)
+            / (4 * pi * epsilon_0)
+            * (distance / distance.magnitude**3)
+        ) * 1e12
+
+        # Apply the force
+        obj1.acceleration -= force
+        obj2.acceleration += force
+
     def calculate(self, step: int) -> None:
         """Calculate the interactions between the objects
 
@@ -141,31 +194,12 @@ class Interactions:
         """
         for i, obj1 in enumerate(self.objects):
             for obj2 in self.objects[i + 1 :]:
-                # Check if the objects are colliding
-                if (
-                    obj2.position[step] - obj1.position[step]
-                ).magnitude > obj1.radius + obj2.radius:
-                    continue
+                if isinstance(obj1, Molecule) and isinstance(obj2, Molecule):
+                    self._molecule_interaction(obj1, obj2, step)
+                    self._elastic_collision(obj1, obj2, step)
 
-                norm_vector: Vector = (obj2.position[step] - obj1.position[step]) / (
-                    obj2.position[step] - obj1.position[step]
-                ).magnitude
-
-                relative_velocity: float = dot_product(
-                    norm_vector, obj1.velocity[step] - obj2.velocity[step]
-                )
-
-                # Check if the objects are moving towards each other
-                if relative_velocity <= 0:
-                    continue
-
-                impulse: Vector = (
-                    2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
-                ) * norm_vector
-
-                # Apply the impulse to the objects
-                obj1.velocity[step] -= impulse / obj1.mass
-                obj2.velocity[step] += impulse / obj2.mass
+                else:
+                    self._elastic_collision(obj1, obj2, step)
 
 
 def calculate_objects(
