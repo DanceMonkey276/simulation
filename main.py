@@ -32,6 +32,8 @@ step: int = 0
 time: float = 0.0
 RUNNING: bool = True
 
+PAUSE: bool = False
+
 # Main loop
 while RUNNING:
     # Check keyboard events
@@ -39,17 +41,9 @@ while RUNNING:
         if event.type == pygame.QUIT:
             RUNNING = False
 
-    # Fill the display
-    display.fill((121, 121, 121))
-
-    # Draw all objects to the screen
-    for obj in simulation_objects:
-        obj.draw(step, coord_sys)
-
-    # Update the screen
-    coord_sys.draw_borders()
-    pygame.display.update()
-    clock.tick(FPS)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                PAUSE = not PAUSE
 
     # Print debug values
     if DEBUG:
@@ -59,13 +53,28 @@ while RUNNING:
         print(f"  screen: {display.get_width()} | {display.get_height()}")
         print("")
 
-    # Check if the simulation should end
-    if time >= END_TIME:
-        RUNNING = False
+    if not PAUSE:
+        # Fill the display
+        display.fill((121, 121, 121))
 
-    # Update values
-    step += 1
-    time += 1 / FPS
+        # Draw all objects to the screen
+        for obj in simulation_objects:
+            obj.draw(step, coord_sys)
+
+        # Update the screen
+        coord_sys.draw_borders()
+        pygame.display.update()
+
+        # Check if the simulation should end
+        if time >= END_TIME:
+            RUNNING = False
+
+        # Update values
+        step += 1
+        time += 1 / FPS
+
+    clock.tick(FPS)
+
 
 # Quit the script
 pygame.display.quit()
