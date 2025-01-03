@@ -7,7 +7,7 @@ from math_core import CoordSys
 from objects import SimulationObject, Molecule, calculate_objects
 
 # Define tweakable values
-FPS: float = 30.0
+FPS: int = 30
 DEBUG: bool = True
 END_TIME: float = 100.0
 
@@ -33,6 +33,7 @@ time: float = 0.0
 RUNNING: bool = True
 
 PAUSE: bool = False
+CTRL_MOD: bool = False
 
 # Main loop
 while RUNNING:
@@ -45,30 +46,55 @@ while RUNNING:
             if event.key == pygame.K_SPACE:
                 PAUSE = not PAUSE
 
+            elif event.key in {pygame.K_LCTRL, pygame.K_RCTRL}:
+                CTRL_MOD = True
+
+            elif event.key == pygame.K_RIGHT:
+                if CTRL_MOD:
+                    step += FPS
+                    time += 1
+                else:
+                    step += 1
+                    time += 1 / FPS
+
+            elif event.key == pygame.K_LEFT:
+                if CTRL_MOD:
+                    if step > FPS:
+                        step -= FPS
+                        time -= 1
+                else:
+                    if step > 0:
+                        step -= 1
+                        time -= 1 / FPS
+
+        elif event.type == pygame.KEYUP:
+            if event.key in {pygame.K_LCTRL, pygame.K_RCTRL}:
+                CTRL_MOD = False
+
     # Print debug values
     if DEBUG:
         print(f"DEBUG #{step}:")
-        print(f"  time: {time} ({END_TIME})")
-        print(f"  fps: {clock.get_fps()} ({FPS})")
+        print(f"  time: {round(time, 5)} ({END_TIME})")
+        print(f"  fps: {round(clock.get_fps(), 5)} ({FPS})")
         print(f"  screen: {display.get_width()} | {display.get_height()}")
         print("")
 
+    # Fill the display
+    display.fill((121, 121, 121))
+
+    # Draw all objects to the screen
+    for obj in simulation_objects:
+        obj.draw(step, coord_sys)
+
+    # Update the screen
+    coord_sys.draw_borders()
+    pygame.display.update()
+
+    # Check if the simulation should end
+    if time >= END_TIME:
+        RUNNING = False
+
     if not PAUSE:
-        # Fill the display
-        display.fill((121, 121, 121))
-
-        # Draw all objects to the screen
-        for obj in simulation_objects:
-            obj.draw(step, coord_sys)
-
-        # Update the screen
-        coord_sys.draw_borders()
-        pygame.display.update()
-
-        # Check if the simulation should end
-        if time >= END_TIME:
-            RUNNING = False
-
         # Update values
         step += 1
         time += 1 / FPS
