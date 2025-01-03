@@ -6,10 +6,40 @@ import pygame
 from math_core import CoordSys
 from objects import SimulationObject, Molecule, calculate_objects
 
-# Define tweakable values
+# Set defaults for the tweakable values
 FPS: int = 30
-DEBUG: bool = True
+DEBUG: bool = False
 END_TIME: float = 100.0
+
+# Evaluate the commandline arguments
+args: List[str] = sys.argv
+args.pop(0)
+
+i: int = 0
+
+while i < len(args):
+    arg = args[i]
+    if arg in {"-h", "--help"}:
+        print(
+            """
+Help for commandline arguments of the simulation
+ -h, --help             Display this help and exit
+ -f, --fps FRAMES       Sets the frames per second of the simulation to FRAMES
+ -d, --debug            Activates debug modes, prints useful information
+ -e, --end-time TIME    Sets the ending time of the simulation to TIME"""
+        )
+        sys.exit(0)
+
+    elif arg in {"-f", "--fps"}:
+        i += 1
+        FPS = int(args[i])
+    elif arg in {"-d", "--debug"}:
+        DEBUG = True
+    elif arg in {"-e", "--end-time"}:
+        i += 1
+        END_TIME = float(args[i])
+
+    i += 1
 
 # Create the objects in the simulation
 simulation_objects: List[SimulationObject] = [
