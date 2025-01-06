@@ -143,12 +143,12 @@ class Vector(Sequence[float]):
     def __rmul__(self, scalar: Any) -> Vector:
         return self.__mul__(scalar)
 
-    def __div__(self, other: Any) -> Vector:
+    def __truediv__(self, other: Any) -> Vector:
         if isinstance(other, (int, float)):
             return Vector(self.x / other, self.y / other)
         raise ValueError(f"Can divide vector only by scalar, not {type(other)}")
 
-    def __truediv__(self, other: Any) -> Vector:
+    def __floordiv__(self, other: Any) -> Vector:
         if isinstance(other, (int, float)):
             return Vector(self.x // other, self.y // other)
         raise ValueError(f"Can divide vector only by scalar, not {type(other)}")
