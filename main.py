@@ -32,12 +32,27 @@ Help for commandline arguments of the simulation
 
     elif arg in {"-f", "--fps"}:
         i += 1
-        FPS = int(args[i])
+        try:
+            FPS = int(args[i])
+        except ValueError as exc:
+            raise ValueError(f"Invalid FPS value: {args[i]}") from exc
+        except IndexError as exc:
+            raise ValueError(f"'{arg}' needs an FPS value") from exc
+
     elif arg in {"-d", "--debug"}:
         DEBUG = True
+
     elif arg in {"-e", "--end-time"}:
         i += 1
-        END_TIME = float(args[i])
+        try:
+            END_TIME = float(args[i])
+        except ValueError as exc:
+            raise ValueError(f"Invalid time value: {args[i]}") from exc
+        except IndexError as exc:
+            raise ValueError(f"'{arg}' needs a time value") from exc
+
+    else:
+        raise ValueError(f"Invalid argument: '{arg}'")
 
     i += 1
 
