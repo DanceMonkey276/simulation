@@ -18,7 +18,7 @@ args.pop(0)
 i: int = 0
 
 while i < len(args):
-    arg = args[i]
+    arg: str = args[i]
     if arg in {"-h", "--help"}:
         print(
             """
@@ -58,8 +58,8 @@ Help for commandline arguments of the simulation
 
 # Create the objects in the simulation
 simulation_objects: List[SimulationObject] = [
-    Molecule(7000, 5000, charge=1),
-    Molecule(8000, 5000, charge=-1),
+    Molecule(7000.0, 5000.0, charge=1),
+    Molecule(8000.0, 5000.0, charge=-1),
 ]
 
 # Calculate the position values of the objects
@@ -67,7 +67,7 @@ calculate_objects(simulation_objects, END_TIME, 1 / FPS)
 
 # Initialize the display
 pygame.display.init()
-pygame.display.set_mode((1500, 1000), flags=pygame.RESIZABLE)
+pygame.display.set_mode((1500.0, 1000.0), flags=pygame.RESIZABLE)
 display: pygame.Surface = pygame.display.get_surface()
 clock: pygame.time.Clock = pygame.time.Clock()
 coord_sys: CoordSys = CoordSys(display)

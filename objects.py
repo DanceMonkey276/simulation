@@ -16,15 +16,15 @@ class SimulationObject:
     ) -> None:
         # Motion values
         self.position: List[Vector] = [Vector(x_0, y_0)]
-        self.velocity: List[Vector] = [Vector(0, 0)]
-        self.acceleration: Vector = Vector(0, 0)
+        self.velocity: List[Vector] = [Vector(0.0, 0.0)]
+        self.acceleration: Vector = Vector(0.0, 0.0)
 
         # Object properties
         self.radius: float = radius
         self.mass: float = mass
 
         # Object index
-        self.index = SimulationObject.global_index
+        self.index: int = SimulationObject.global_index
         SimulationObject.global_index += 1
 
     def __repr__(self) -> str:
@@ -62,7 +62,7 @@ class SimulationObject:
 
     def next(self) -> None:
         """Copy the last velocity and position values for further calculation"""
-        self.acceleration = Vector(0, 0)
+        self.acceleration = Vector(0.0, 0.0)
         self.velocity.append(self.velocity[-1])
         self.position.append(self.position[-1])
 
@@ -211,7 +211,7 @@ def calculate_objects(
 
     interactions: Interactions = Interactions(objects)
 
-    time: float = 0
+    time: float = 0.0
     step: int = 0
 
     while time <= end_time:

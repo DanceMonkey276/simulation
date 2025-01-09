@@ -77,13 +77,13 @@ class CoordSys:
             pygame.draw.rect(
                 self.display,
                 (0, 0, 0),
-                (0, 0, x_offset, height),
+                (0.0, 0.0, x_offset, height),
             )
 
             pygame.draw.rect(
                 self.display,
                 (0, 0, 0),
-                (width - x_offset, 0, x_offset, height),
+                (width - x_offset, 0.0, x_offset, height),
             )
 
         else:
@@ -91,13 +91,13 @@ class CoordSys:
             pygame.draw.rect(
                 self.display,
                 (0, 0, 0),
-                (0, 0, width, y_offset),
+                (0.0, 0.0, width, y_offset),
             )
 
             pygame.draw.rect(
                 self.display,
                 (0, 0, 0),
-                (0, height - y_offset, width, y_offset),
+                (0.0, height - y_offset, width, y_offset),
             )
 
 
