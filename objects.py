@@ -1,4 +1,13 @@
-"""Objects that are used in the physical simulation"""
+"""A python module containing objects for a physical simulation
+
+This module contains:
+- class `SimulationObject`: A base class for other objects
+- class `Molecule`: A molecule with a charge used for coulomb-interactions
+- class `Interactions`: A class to manage and calculate \
+    the interactions between the objects
+- function `calculate_objects`: A function to calculate and update the \
+    position values of all objects
+"""
 
 from typing import List
 import pygame
@@ -7,7 +16,15 @@ from math_core import Vector, CoordSys
 
 
 class SimulationObject:
-    """A base class for an object in the simulation"""
+    """A base class for an object in the simulation
+
+    The object features:
+    - position [`pm`], velocity [`pm/s`] and acceleration [`pm/s^2`] values
+    - a way to update these values respectively
+    - mass [`u`] and radius [`pm`] values
+    - a way to draw itself onto a pygame screen
+    - an index
+    """
 
     global_index: int = 0
 
@@ -36,13 +53,20 @@ class SimulationObject:
 
         Returns
         -------
-        Vector
+        `Vector`
             The starting position of the object
         """
         return self.position[0]
 
     @r_0.setter
     def r_0(self, new_val: Vector) -> None:
+        """Setter-function for the starting position of the object
+
+        Parameters
+        ----------
+        `new_val` : `Vector`
+            The new starting position of the object
+        """
         self.position[0] = new_val
 
     @property
@@ -51,30 +75,49 @@ class SimulationObject:
 
         Returns
         -------
-        Vector
+        `Vector`
             The starting velocity of the object
         """
         return self.velocity[0]
 
     @v_0.setter
     def v_0(self, new_val: Vector) -> None:
+        """Setter-function for the starting velocity of the object
+
+        Parameters
+        ----------
+        `new_val` : `Vector`
+            The new starting velocity of the object
+        """
         self.velocity[0] = new_val
 
     def next(self) -> None:
-        """Copy the last velocity and position values for further calculation"""
+        """Update the motion values of the object
+
+        Reset the acceleration to a zero-vector \\
+        Set the next velocity to the last one \\
+        Set the next position to the last one
+        """
         self.acceleration = Vector(0.0, 0.0)
         self.velocity.append(self.velocity[-1])
         self.position.append(self.position[-1])
 
     def step(self, step: int, dt: float) -> None:
-        """Calculate where the object will be in the next step
+        """Calculate the next position values of the object
+
+        Apply euler chromer to the velocity and position values
+
+        ```
+        v = a * dt
+        r = v * dt
+        ```
 
         Parameters
         ----------
-        step : int
-            The step at which the values should be calculated
-        dt : float
-            The time difference to the next step
+        `step` : `int`
+            The current step of the simulation
+        `dt` : `float`
+            The difference in time between two steps
         """
         self.velocity[step] += self.acceleration * dt
         self.position[step] += self.velocity[step] * dt
@@ -84,10 +127,10 @@ class SimulationObject:
 
         Parameters
         ----------
-        step : int
+        `step` : `int`
             The current step of the simulation
-        coord_sys : CoordSys
-            The coordinate System used for the simulation screen
+        `coord_sys` : `CoordSys`
+            The coordinate system of the display
         """
         pygame.draw.circle(
             coord_sys.display,
@@ -105,7 +148,17 @@ class SimulationObject:
 
 
 class Molecule(SimulationObject):
-    """A base class for molecules in the simulation"""
+    """A base class for a molecule in the simulation
+
+    The molecule features:
+    - everything from it's baseclass (`SimulationObject`)
+        - position [`pm`], velocity [`pm/s`] and acceleration [`pm/s^2`] values
+        - a way to update these values respectively
+        - mass [`u`] and radius [`pm`] values
+        - a way to draw itself onto a pygame screen
+        - an index
+    - a charge [`e`]
+    """
 
     def __init__(
         self,
@@ -124,7 +177,16 @@ class Molecule(SimulationObject):
 
 
 class Interactions:
-    """Organize interactions between objects"""
+    """Simulate interactions between objects
+
+    This class features:
+    - elastic collisions
+        - a collision with no friction
+        - kinetic energy and momentum stays the same
+    - coulomb interactions
+        - calculate the force between charged objects
+        - `f = 1 / (4 * pi * epsilon_0) * q_1 * q_2 / r^2`
+    """
 
     def __init__(self, objects: List[SimulationObject]) -> None:
         self.objects = objects
@@ -135,6 +197,20 @@ class Interactions:
     def _elastic_collision(
         self, obj1: SimulationObject, obj2: SimulationObject, step: int
     ) -> None:
+        """Apply an elastic collision between two objects
+
+        Resolve an elastic collision by ensuring that the total momentum \\
+        of the system as well as its kinetic energy stays the same
+
+        Parameters
+        ----------
+        `obj1` : `SimulationObject`
+            The first interacting object
+        `obj2` : `SimulationObject`
+            The second interacting object
+        `step` : `int`
+            The current step of the simulation
+        """
         distance: Vector = obj2.position[step] - obj1.position[step]
 
         # Check if the objects are colliding
@@ -154,6 +230,20 @@ class Interactions:
         obj2.velocity[step] += impulse / obj2.mass
 
     def _molecule_interaction(self, obj1: Molecule, obj2: Molecule, step: int) -> None:
+        """Apply the coulomb force between two molecules
+
+        Resolve an interaction between charged objects using the formula for coulomb force: \\
+        `f = 1 / (4 * pi * epsilon_0) * q_1 * q_2 / r^2`
+
+        Parameters
+        ----------
+        `obj1` : `Molecule`
+            The first interacting object
+        `obj2` : `Molecule`
+            The second interacting object
+        `step` : `int`
+            The current step of the simulation
+        """
         # Convert the distance to metres
         distance: Vector = (obj2.position[step] - obj1.position[step]) * 1e-12
 
@@ -181,7 +271,7 @@ class Interactions:
 
         Parameters
         ----------
-        step : int
+        `step` : `int`
             The current step of the simulation
         """
         for i, obj1 in enumerate(self.objects):
@@ -197,18 +287,21 @@ class Interactions:
 def calculate_objects(
     objects: List[SimulationObject], end_time: float, dt: float
 ) -> None:
-    """Calculate the position values of all objects at every time in the simulation
+    """Calculate the positions of the objects at every time
+
+    Loop through all possible time steps, and then:
+    1. Calculate the interactions between the objects
+    2. Update the velocity and position values
 
     Parameters
     ----------
-    objects : List[SimulationObject]
-        A list containing all objects for which the values should be calculated
-    end_time : float
-        The
-    dt : float
-        The time difference between every step
+    `objects` : `List[SimulationObject]`
+        The list of objects that are simulated
+    `end_time` : `float`
+        The time at which the simulation will end
+    `dt` : `float`
+        The difference in time between two steps
     """
-
     interactions: Interactions = Interactions(objects)
 
     time: float = 0.0

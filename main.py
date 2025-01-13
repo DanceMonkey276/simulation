@@ -1,4 +1,13 @@
-"""The main script for a physical simulation"""
+"""The main script for a physical simulation
+
+Simulate balls with elastic collisions or molecules with coulomb interactions
+
+Commandline arguments of the script
+ -h, --help             Display this help and exit
+ -f, --fps FRAMES       Sets the frames per second of the simulation to FRAMES
+ -d, --debug            Activates debug modes, prints useful information
+ -e, --end-time TIME    Sets the ending time of the simulation to TIME
+"""
 
 import sys
 from typing import List

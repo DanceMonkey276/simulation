@@ -1,4 +1,9 @@
-"""Math utilities used for the physical simulation"""
+"""A python module containing math classes for a physical simulation
+
+This module contains:
+- class `CoordSys`: A dynamic coordinate system for the pygame screen
+- class `Vector`: A two-dimensional vector with enhanced functionality
+"""
 
 from __future__ import annotations
 from typing import Tuple, Any, Iterator
@@ -7,7 +12,13 @@ import pygame
 
 
 class CoordSys:
-    """Apply a custom coordinate system to a pygame screen"""
+    """Apply a dynamic coordinate system to a pygame screen
+
+    The coordinate system features:
+    - transformation of coordinates
+    - transformation of lengths
+    - borders to keep a constant aspect ratio
+    """
 
     def __init__(self, display: pygame.Surface) -> None:
         self.display = display
@@ -18,6 +29,19 @@ class CoordSys:
         return f"<Coordinate System ([0, {self.x_tot}], [0, {self.y_tot}])>"
 
     def _update_dimensions(self) -> Tuple[float, float, float, float, float]:
+        """Calculate the scale, offset and dimension for the screen
+
+        scale factor: tells how many screen pixels a single step in the coordinate system is
+        display width: the width of the pygame display
+        display height: the height of the pygame display
+        x_offset: compensates for different aspect ratios, 0 if aligned
+        y_offset: compensates for different aspect ratios, 0 if alligned
+
+        Returns
+        -------
+        `Tuple[float, float, float, float, float]`
+            The scale factor, display width, display height, x offset and y offset values
+        """
         # Calculate the new scale factor
         scale: float = min(
             self.display.get_width() / self.x_tot,
@@ -33,34 +57,36 @@ class CoordSys:
         )
 
     def distance(self, distance: float) -> float:
-        """Calculate the distance in pixels on the screen relative to the coordinate system
+        """Convert a distance value from the coordinate syste to the
+        value in pixels on the pygame screen
 
         Parameters
         ----------
-        distance : float
-            The original distance that should be converted
+        `distance` : `float`
+            The original distance in the coordinate system
 
         Returns
         -------
-        float
-            The new distance in pixels
+        `float`
+            The new distance in pixels on the screen
         """
         return distance * self._update_dimensions()[0]
 
     def coord(self, x: float, y: float) -> Tuple[float, float]:
-        """Calculate a coordinate as pixels on the screen relative to the coordinate systen
+        """Convert a coordinate from the coordinate system into a
+        coordinate in pixels on the pygame screen
 
         Parameters
         ----------
-        x : float
-            The original x coordinate that should be converted
-        y : float
-            The original y coordinate that should be converted
+        `x` : `float`
+            The x-coordinate of the original coordinate
+        `y` : `float`
+            The y-coordinate of the original coordinate
 
         Returns
         -------
-        Tuple[float, float]
-            The new coordinate as pixels
+        `Tuple[float, float]`
+            The new coordinate in pixels on the screen
         """
         scale, _, height, x_offset, y_offset = self._update_dimensions()
         return (
@@ -69,7 +95,11 @@ class CoordSys:
         )
 
     def draw_borders(self) -> None:
-        """Draw the borders onto a pygame screen to frame the coordinate system"""
+        """Draw borders onto the screen to compensate for different aspect ratios
+        
+        Draw a black border at the edges of the display to ensure the \\
+        visible part always has the same aspect ratio
+        """
         _, width, height, x_offset, y_offset = self._update_dimensions()
 
         if x_offset:
@@ -102,7 +132,14 @@ class CoordSys:
 
 
 class Vector(Sequence[float]):
-    """A two-dimensional dynamic vector"""
+    """A two-dimensional vector
+
+    The vector features:
+    - an x and y coordinate
+    - addition and subtraction with another vector
+    - multiplication and division with a scalar
+    - magnitude property to calculate
+    """
 
     def __init__(self, x: float, y: float) -> None:
         self.x: float = x
@@ -133,11 +170,11 @@ class Vector(Sequence[float]):
             return Vector(self.x - other.x, self.y - other.y)
         raise ValueError(f"Can only subtract two vectors, not vector and {type(other)}")
 
-    def __mul__(self, other: Any) -> Vector:
-        if isinstance(other, (int, float)):
-            return Vector(self.x * other, self.y * other)
+    def __mul__(self, scalar: Any) -> Vector:
+        if isinstance(scalar, (int, float)):
+            return Vector(self.x * scalar, self.y * scalar)
         raise ValueError(
-            f"Can only multiply scalar (int, float) with vector, not {type(other)}"
+            f"Can only multiply scalar (int, float) with vector, not {type(scalar)}"
         )
 
     def __rmul__(self, scalar: Any) -> Vector:
@@ -170,7 +207,7 @@ class Vector(Sequence[float]):
 
         Returns
         -------
-        float
+        `float`
             The magnitude of the vector
         """
         return (self.x**2 + self.y**2) ** 0.5
