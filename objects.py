@@ -108,8 +108,8 @@ class SimulationObject:
         Apply euler chromer to the velocity and position values
 
         ```
-        v = a * dt
-        r = v * dt
+        v += a * dt
+        r += v * dt
         ```
 
         Parameters
@@ -308,12 +308,14 @@ def calculate_objects(
     step: int = 0
 
     while time <= end_time:
-
+        # Calculate the interactions
         interactions.calculate(step)
 
+        # Update the motion values
         for obj in objects:
             obj.step(step, dt)
 
+        # Append the next values
         for obj in objects:
             obj.next()
 
