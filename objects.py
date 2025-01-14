@@ -263,8 +263,8 @@ class Interactions:
         ) * 1e12
 
         # Apply the force
-        obj1.acceleration -= force
-        obj2.acceleration += force
+        obj1.acceleration -= force / obj1.mass
+        obj2.acceleration += force / obj2.mass
 
     def calculate(self, step: int) -> None:
         """Calculate the interactions between the objects
