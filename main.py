@@ -21,7 +21,7 @@ DEBUG: bool = False
 END_TIME: float = 100.0
 
 # Evaluate the commandline arguments
-args: List[str] = sys.argv
+args: List[str] = sys.argv[:]
 args.pop(0)
 
 i: int = 0
