@@ -60,7 +60,7 @@ class CoordSys:
         """Convert a distance value from the coordinate syste to the
         value in pixels on the pygame screen
 
-        Parameters
+        Parametres
         ----------
         `distance` : `float`
             The original distance in the coordinate system
@@ -76,7 +76,7 @@ class CoordSys:
         """Convert a coordinate from the coordinate system into a
         coordinate in pixels on the pygame screen
 
-        Parameters
+        Parametres
         ----------
         `x` : `float`
             The x-coordinate of the original coordinate

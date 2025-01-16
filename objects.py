@@ -62,7 +62,7 @@ class SimulationObject:
     def r_0(self, new_val: Vector) -> None:
         """Setter-function for the starting position of the object
 
-        Parameters
+        Parametres
         ----------
         `new_val` : `Vector`
             The new starting position of the object
@@ -84,7 +84,7 @@ class SimulationObject:
     def v_0(self, new_val: Vector) -> None:
         """Setter-function for the starting velocity of the object
 
-        Parameters
+        Parametres
         ----------
         `new_val` : `Vector`
             The new starting velocity of the object
@@ -112,7 +112,7 @@ class SimulationObject:
         r += v * dt
         ```
 
-        Parameters
+        Parametres
         ----------
         `step` : `int`
             The current step of the simulation
@@ -125,7 +125,7 @@ class SimulationObject:
     def draw(self, step: int, coord_sys: CoordSys) -> None:
         """Draw the object onto the screen
 
-        Parameters
+        Parametres
         ----------
         `step` : `int`
             The current step of the simulation
@@ -202,7 +202,7 @@ class Interactions:
         Resolve an elastic collision by ensuring that the total momentum \\
         of the system as well as its kinetic energy stays the same
 
-        Parameters
+        Parametres
         ----------
         `obj1` : `SimulationObject`
             The first interacting object
@@ -235,7 +235,7 @@ class Interactions:
         Resolve an interaction between charged objects using the formula for coulomb force: \\
         `f = 1 / (4 * pi * epsilon_0) * q_1 * q_2 / r^2`
 
-        Parameters
+        Parametres
         ----------
         `obj1` : `Molecule`
             The first interacting object
@@ -269,7 +269,7 @@ class Interactions:
     def calculate(self, step: int) -> None:
         """Calculate the interactions between the objects
 
-        Parameters
+        Parametres
         ----------
         `step` : `int`
             The current step of the simulation
@@ -293,7 +293,7 @@ def calculate_objects(
     1. Calculate the interactions between the objects
     2. Update the velocity and position values
 
-    Parameters
+    Parametres
     ----------
     `objects` : `List[SimulationObject]`
         The list of objects that are simulated
