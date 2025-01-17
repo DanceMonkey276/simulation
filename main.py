@@ -145,7 +145,7 @@ while RUNNING:
     pygame.display.update()
 
     # Check if the simulation should end
-    if time >= END_TIME:
+    if round(time, 5) >= END_TIME:
         RUNNING = False
 
     if not PAUSE:

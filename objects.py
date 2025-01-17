@@ -304,20 +304,20 @@ def calculate_objects(
     """
     interactions: Interactions = Interactions(objects)
 
-    time: float = 0.0
-    step: int = 0
+    time: float = dt
+    step: int = 1
 
     while time <= end_time:
+        # Append the next values
+        for obj in objects:
+            obj.next()
+
         # Calculate the interactions
         interactions.calculate(step)
 
         # Update the motion values
         for obj in objects:
             obj.step(step, dt)
-
-        # Append the next values
-        for obj in objects:
-            obj.next()
 
         time += dt
         step += 1
