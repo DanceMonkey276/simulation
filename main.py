@@ -16,7 +16,7 @@ from math_core import CoordSys
 from objects import SimulationObject, Molecule, calculate_objects
 
 # Set defaults for the tweakable values
-FPS: int = 30
+FPS: int = 60
 DEBUG: bool = False
 END_TIME: float = 100.0
 
