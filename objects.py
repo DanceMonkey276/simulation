@@ -29,11 +29,17 @@ class SimulationObject:
     global_index: int = 0
 
     def __init__(
-        self, x_0: float, y_0: float, radius: float = 100.0, mass: float = 1.0
+        self,
+        x_0: float,
+        y_0: float,
+        vx_0: float = 0.0,
+        vy_0: float = 0.0,
+        radius: float = 100.0,
+        mass: float = 1.0,
     ) -> None:
         # Motion values
         self.position: List[Vector] = [Vector(x_0, y_0)]
-        self.velocity: List[Vector] = [Vector(0.0, 0.0)]
+        self.velocity: List[Vector] = [Vector(vx_0, vy_0)]
         self.acceleration: Vector = Vector(0.0, 0.0)
 
         # Object properties
@@ -164,11 +170,13 @@ class Molecule(SimulationObject):
         self,
         x_0: float,
         y_0: float,
+        vx_0: float = 0.0,
+        vy_0: float = 0.0,
         radius: float = 100.0,
         mass: float = 1.0,
         charge: int = 0,
     ) -> None:
-        super().__init__(x_0, y_0, radius, mass)
+        super().__init__(x_0, y_0, vx_0, vy_0, radius, mass)
 
         self.charge = charge
 
