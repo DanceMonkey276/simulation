@@ -71,15 +71,15 @@ simulation_objects: List[SimulationObject] = [
     Molecule(8000.0, 5000.0, charge=-1),
 ]
 
-# Calculate the position values of the objects
-calculate_objects(simulation_objects, END_TIME, 1 / FPS)
-
 # Initialize the display
 pygame.display.init()
 pygame.display.set_mode((1500.0, 1000.0), flags=pygame.RESIZABLE)
 display: pygame.Surface = pygame.display.get_surface()
 clock: pygame.time.Clock = pygame.time.Clock()
 coord_sys: CoordSys = CoordSys(display)
+
+# Calculate the position values of the objects
+calculate_objects(simulation_objects, END_TIME, 1 / FPS, coord_sys)
 
 # Define starting values for the main loop
 step: int = 0

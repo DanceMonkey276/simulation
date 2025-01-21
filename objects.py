@@ -180,6 +180,9 @@ class Interactions:
     """Simulate interactions between objects
 
     This class features:
+    - wall collisions:
+        - calculate the collision between the object and the wall
+        - use the principle of elastic collisions
     - elastic collisions
         - a collision with no friction
         - kinetic energy and momentum stays the same
@@ -193,6 +196,29 @@ class Interactions:
 
     def __repr__(self) -> str:
         return "<Interactions>"
+
+    def _wall_collision(
+        self, obj: SimulationObject, step: int, coord_sys: CoordSys
+    ) -> None:
+        """Apply a collision between an object and the edge of the display
+
+        Parametres
+        ----------
+        `obj` : `SimulationObject`
+            The object that should collide with the wall
+        `step` : `int`
+            The current step of the simulation
+        `coord_sys` : `CoordSys`
+            The coordinate system of the screen
+        """
+        if obj.position[step].x - obj.radius <= 0:
+            obj.velocity[step].x = -obj.velocity[step].x
+        if obj.position[step].x + obj.radius >= coord_sys.x_tot:
+            obj.velocity[step].x = -obj.velocity[step].x
+        if obj.position[step].y - obj.radius <= 0:
+            obj.velocity[step].y = -obj.velocity[step].y
+        if obj.position[step].y + obj.radius >= coord_sys.y_tot:
+            obj.velocity[step].y = -obj.velocity[step].y
 
     def _elastic_collision(
         self, obj1: SimulationObject, obj2: SimulationObject, step: int
@@ -266,7 +292,7 @@ class Interactions:
         obj1.acceleration -= force / obj1.mass
         obj2.acceleration += force / obj2.mass
 
-    def calculate(self, step: int) -> None:
+    def calculate(self, step: int, coord_sys: CoordSys) -> None:
         """Calculate the interactions between the objects
 
         Parametres
@@ -278,14 +304,14 @@ class Interactions:
             for obj2 in self.objects[i + 1 :]:
                 if isinstance(obj1, Molecule) and isinstance(obj2, Molecule):
                     self._molecule_interaction(obj1, obj2, step)
-                    self._elastic_collision(obj1, obj2, step)
 
-                else:
-                    self._elastic_collision(obj1, obj2, step)
+                self._elastic_collision(obj1, obj2, step)
+
+            self._wall_collision(obj1, step, coord_sys)
 
 
 def calculate_objects(
-    objects: List[SimulationObject], end_time: float, dt: float
+    objects: List[SimulationObject], end_time: float, dt: float, coord_sys: CoordSys
 ) -> None:
     """Calculate the positions of the objects at every time
 
@@ -313,7 +339,7 @@ def calculate_objects(
             obj.next()
 
         # Calculate the interactions
-        interactions.calculate(step)
+        interactions.calculate(step, coord_sys)
 
         # Update the motion values
         for obj in objects:
