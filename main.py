@@ -101,7 +101,7 @@ simulation_objects: List[SimulationObject] = [
 
 # Initialize the display
 pygame.display.init()
-pygame.display.set_mode((1500.0, 1000.0), flags=pygame.RESIZABLE)
+pygame.display.set_mode((0.0, 0.0), flags=pygame.FULLSCREEN)
 display: pygame.Surface = pygame.display.get_surface()
 clock: pygame.time.Clock = pygame.time.Clock()
 coord_sys: CoordSys = CoordSys(display)
@@ -115,6 +115,7 @@ time: float = 0.0
 RUNNING: bool = True
 
 PAUSE: bool = False
+FULLSCREEN: bool = True
 CTRL_MOD: bool = False
 
 # Main loop
@@ -138,6 +139,16 @@ while RUNNING:
                 else:
                     step += 1
                     time += 1 / FPS
+
+            elif event.key == pygame.K_F11:
+                if FULLSCREEN:
+                    pygame.display.set_mode(
+                        flags=pygame.RESIZABLE,
+                    )
+                    FULLSCREEN = False
+                else:
+                    pygame.display.set_mode((0.0, 0.0), flags=pygame.FULLSCREEN)
+                    FULLSCREEN = True
 
             elif event.key == pygame.K_LEFT:
                 if CTRL_MOD:
