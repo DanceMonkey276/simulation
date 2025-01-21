@@ -67,8 +67,36 @@ Help for commandline arguments of the simulation
 
 # Create the objects in the simulation
 simulation_objects: List[SimulationObject] = [
-    Molecule(7000.0, 5000.0, charge=1),
-    Molecule(8000.0, 5000.0, charge=-1),
+    SimulationObject(8137, 9084, 140, 270),
+    SimulationObject(5993, 6018, -10, 260),
+    SimulationObject(1588, 8379, 230, 80),
+    SimulationObject(3909, 2819, 50, 210),
+    SimulationObject(8426, 3562, -280, 130),
+    SimulationObject(4816, 5947, -110, 290),
+    SimulationObject(5235, 7409, 90, -230),
+    SimulationObject(2483, 5261, -290, -180),
+    SimulationObject(1358, 7910, -160, -160),
+    SimulationObject(2332, 2949, 270, -180),
+    SimulationObject(4636, 9530, -50, 210),
+    SimulationObject(985, 1125, -20, 200),
+    SimulationObject(5372, 8847, 100, -280),
+    SimulationObject(9725, 3339, 100, 220),
+    SimulationObject(2838, 8600, -240, 0),
+    SimulationObject(347, 9041, -50, -130),
+    SimulationObject(692, 3557, -40, 190),
+    SimulationObject(2073, 5674, -10, 190),
+    SimulationObject(1514, 4768, -100, -70),
+    SimulationObject(1340, 5008, 50, -70),
+    Molecule(2538, 8494, 160, -60, charge=2),
+    Molecule(3944, 1923, -10, -220, charge=3),
+    Molecule(2825, 7686, -20, 170, charge=-2),
+    Molecule(4551, 2351, 100, -80, charge=-3),
+    Molecule(5191, 1345, 150, 20, charge=2),
+    Molecule(3387, 6318, -260, -130, charge=3),
+    Molecule(3228, 5934, -260, 80, charge=2),
+    Molecule(6456, 4856, 170, -40, charge=-2),
+    Molecule(8548, 3259, -200, -40, charge=-3),
+    Molecule(9389, 5770, -80, -180, charge=3),
 ]
 
 # Initialize the display

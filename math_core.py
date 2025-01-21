@@ -22,7 +22,7 @@ class CoordSys:
 
     def __init__(self, display: pygame.Surface) -> None:
         self.display = display
-        self.x_tot: int = 15000
+        self.x_tot: int = 10000
         self.y_tot: int = 10000
 
     def __repr__(self) -> str:
