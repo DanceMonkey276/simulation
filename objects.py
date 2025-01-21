@@ -212,12 +212,16 @@ class Interactions:
             The coordinate system of the screen
         """
         if obj.position[step].x - obj.radius <= 0:
+            obj.position[step].x = obj.radius
             obj.velocity[step].x = -obj.velocity[step].x
         if obj.position[step].x + obj.radius >= coord_sys.x_tot:
+            obj.position[step].x = coord_sys.x_tot - obj.radius
             obj.velocity[step].x = -obj.velocity[step].x
         if obj.position[step].y - obj.radius <= 0:
+            obj.position[step].y = obj.radius
             obj.velocity[step].y = -obj.velocity[step].y
         if obj.position[step].y + obj.radius >= coord_sys.y_tot:
+            obj.position[step].y = coord_sys.y_tot - obj.radius
             obj.velocity[step].y = -obj.velocity[step].y
 
     def _elastic_collision(
