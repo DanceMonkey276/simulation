@@ -9,7 +9,7 @@ This module contains:
     position values of all objects
 """
 
-from typing import List
+from typing import List, Tuple
 import pygame
 from scipy.constants import pi, epsilon_0
 from math_core import Vector, CoordSys
@@ -36,6 +36,7 @@ class SimulationObject:
         vy_0: float = 0.0,
         radius: float = 100.0,
         mass: float = 1.0,
+        colour: Tuple[int, int, int] = (255, 255, 255),
     ) -> None:
         # Motion values
         self.position: List[Vector] = [Vector(x_0, y_0)]
@@ -45,6 +46,7 @@ class SimulationObject:
         # Object properties
         self.radius: float = radius
         self.mass: float = mass
+        self.colour: Tuple[int, int, int] = colour
 
         # Object index
         self.index: int = SimulationObject.global_index
@@ -140,7 +142,7 @@ class SimulationObject:
         """
         pygame.draw.circle(
             coord_sys.display,
-            (255, 255, 255),
+            self.colour,
             coord_sys.coord(*self.position[step]),
             coord_sys.distance(self.radius),
         )
@@ -174,9 +176,10 @@ class Molecule(SimulationObject):
         vy_0: float = 0.0,
         radius: float = 100.0,
         mass: float = 1.0,
+        colour: Tuple[int, int, int] = (255, 255, 255),
         charge: int = 0,
     ) -> None:
-        super().__init__(x_0, y_0, vx_0, vy_0, radius, mass)
+        super().__init__(x_0, y_0, vx_0, vy_0, radius, mass, colour)
 
         self.charge = charge
 
