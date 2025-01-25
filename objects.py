@@ -12,7 +12,7 @@ This module contains:
 from typing import List, Tuple
 import pygame
 from scipy.constants import pi, epsilon_0
-from math_core import Vector, CoordSys
+from math_core import Vector, CoordSys, dot_product
 
 
 class SimulationObject:
@@ -258,17 +258,23 @@ class Interactions:
         if distance.magnitude > obj1.radius + obj2.radius:
             return
 
-        relative_velocity: Vector = obj1.velocity[step] - obj2.velocity[step]
+        norm_vector: Vector = distance / distance.magnitude
+
+        relative_velocity: float = dot_product(
+            obj1.velocity[step] - obj2.velocity[step], norm_vector
+        )
 
         # Check if the objects are moving towards each other
-        if relative_velocity.magnitude <= 0:
+        if relative_velocity < 0:
             return
 
-        impulse: Vector = 2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
+        impulse: Vector = (
+            2 * relative_velocity / (obj1.mass + obj2.mass)
+        ) * norm_vector
 
-        # Apply the impulse to the objects
-        obj1.velocity[step] -= impulse / obj1.mass
-        obj2.velocity[step] += impulse / obj2.mass
+        # # Apply the impulse to the objects
+        obj1.velocity[step] -= impulse * obj1.mass
+        obj2.velocity[step] += impulse * obj2.mass
 
     def _molecule_interaction(self, obj1: Molecule, obj2: Molecule, step: int) -> None:
         """Apply the coulomb force between two molecules

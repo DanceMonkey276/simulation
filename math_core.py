@@ -211,3 +211,24 @@ class Vector(Sequence[float]):
             The magnitude of the vector
         """
         return (self.x**2 + self.y**2) ** 0.5
+
+
+def dot_product(vec1: Vector, vec2: Vector) -> float:
+    """Calculate the scalar product between two vectors
+
+    `scalar_product = v1_x * v2_x + v1_y * v2_y`
+
+
+    Parametres
+    ----------
+    `vec1` : `Vector`
+        The first vector
+    `vec2` : `Vector`
+        The second vector
+
+    Returns
+    -------
+    `float`
+        The scalar product
+    """
+    return vec1.x * vec2.x + vec1.y + vec2.y
