@@ -231,4 +231,4 @@ def dot_product(vec1: Vector, vec2: Vector) -> float:
     `float`
         The scalar product
     """
-    return vec1.x * vec2.x + vec1.y + vec2.y
+    return vec1.x * vec2.x + vec1.y * vec2.y

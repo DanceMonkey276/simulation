@@ -269,12 +269,12 @@ class Interactions:
             return
 
         impulse: Vector = (
-            2 * relative_velocity / (obj1.mass + obj2.mass)
+            2 * relative_velocity / (1 / obj1.mass + 1 / obj2.mass)
         ) * norm_vector
 
-        # # Apply the impulse to the objects
-        obj1.velocity[step] -= impulse * obj1.mass
-        obj2.velocity[step] += impulse * obj2.mass
+        # Apply the impulse to the objects
+        obj1.velocity[step] -= impulse / obj1.mass
+        obj2.velocity[step] += impulse / obj2.mass
 
     def _molecule_interaction(self, obj1: Molecule, obj2: Molecule, step: int) -> None:
         """Apply the coulomb force between two molecules
@@ -310,8 +310,8 @@ class Interactions:
         ) * 1e12
 
         # Apply the force
-        obj1.acceleration -= force / obj1.mass
-        obj2.acceleration += force / obj2.mass
+        obj1.acceleration -= force
+        obj2.acceleration += force
 
     def calculate(self, step: int, coord_sys: CoordSys) -> None:
         """Calculate the interactions between the objects
