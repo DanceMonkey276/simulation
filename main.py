@@ -102,6 +102,7 @@ simulation_objects: List[SimulationObject] = [
 # Initialize the display
 pygame.display.init()
 pygame.display.set_mode((0.0, 0.0), flags=pygame.FULLSCREEN)
+pygame.display.set_caption("Simulation")
 display: pygame.Surface = pygame.display.get_surface()
 clock: pygame.time.Clock = pygame.time.Clock()
 coord_sys: CoordSys = CoordSys(display)
